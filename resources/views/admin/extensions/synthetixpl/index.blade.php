@@ -8,7 +8,7 @@
     <h1>SynthetixPlugins<small>Gestor de plugins</small></h1>
 @endsection
 
-@section('main')
+@section('content')
     <div class="row">
         <div class="col-xs-12">
             <div class="box box-primary">
