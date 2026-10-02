@@ -6,5 +6,8 @@ info:
   author: "Aledevv"
   target: "beta-2026-06"
 
+admin:
+  view: "admin.extensions.synthetixpl.index"
+
 client:
   - component: "PluginManagerContainer"
