@@ -1,5 +1,10 @@
-identifier: synthetixpl
-name: SynthetixPlugins
-version: 1.0.0
-description: Gestor e instalador de plugins de Modrinth para Pterodactyl.
-author: Aledevv
+info:
+  name: "SynthetixPlugins"
+  identifier: "synthetixpl"
+  version: "1.0.0"
+  description: "Gestor de plugins de Modrinth para Pterodactyl"
+  author: "Aledevv"
+  target: "beta-2026-06"
+
+client:
+  - component: "PluginManagerContainer"
