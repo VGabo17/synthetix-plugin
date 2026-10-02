@@ -4,7 +4,7 @@ info:
   version: "1.0.0"
   description: "Gestor de plugins de Modrinth para Pterodactyl"
   author: "Aledevv"
-  target: "beta-2026-06"
+  target: "beta-2026-08"
 
 admin:
   view: "admin.extensions.synthetixpl.index"
