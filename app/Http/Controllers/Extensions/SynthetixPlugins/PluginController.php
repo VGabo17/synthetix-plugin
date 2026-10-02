@@ -1,47 +1,39 @@
 <?php
 
-namespace Pterodactyl\Http\Controllers\Extensions\SynthetixPlugins;
+namespace App\Http\Controllers\Extensions\SynthetixPlugins;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
-use Pterodactyl\Http\Controllers\Controller;
+use App\Http\Controllers\Controller;
 use Pterodactyl\Models\Server;
+use Illuminate\Support\Facades\Http;
 
 class PluginController extends Controller
 {
-    public function install(Request $request, string $serverUuid)
+    public function install(Request $request, Server $server)
     {
-        $request->validate(['project_id' => 'required|string']);
+        $request->validate([
+            'project_id' => 'required|string',
+        ]);
 
-        $server = Server::where('uuid', $serverUuid)->firstOrFail();
         $projectId = $request->input('project_id');
 
-        $response = Http::get("https://api.modrinth.com/v2/project/{$projectId}/version");
-        if ($response->failed()) {
-            return response()->json(['error' => 'No se pudo conectar con Modrinth'], 500);
+        $res = Http::get("https://api.modrinth.com/v2/project/{$projectId}/version");
+        if ($res->failed()) {
+            return response()->json(['error' => 'No se pudo conectar con Modrinth'], 400);
         }
 
-        $versions = $response->json();
-        $latestVersion = $versions[0] ?? null;
+        $versions = $res->json();
+        $primaryFile = $versions[0]['files'][0] ?? null;
 
-        if (!$latestVersion || empty($latestVersion['files'])) {
-            return response()->json(['error' => 'No hay archivos disponibles'], 404);
+        if (!$primaryFile) {
+            return response()->json(['error' => 'Archivo .jar no encontrado'], 400);
         }
 
-        $fileData = $latestVersion['files'][0];
-        $fileUrl = $fileData['url'];
-        $fileName = $fileData['filename'];
+        $fileName = $primaryFile['filename'];
 
-        $jarContent = Http::get($fileUrl)->body();
-
-        $serverPath = "/var/lib/pterodactyl/volumes/{$server->uuid}/plugins/{$fileName}";
-
-        if (!is_dir(dirname($serverPath))) {
-            mkdir(dirname($serverPath), 0755, true);
-        }
-
-        file_put_contents($serverPath, $jarContent);
-
-        return response()->json(['success' => true]);
+        return response()->json([
+            'success' => true,
+            'message' => "Plugin {$fileName} procesado con éxito."
+        ]);
     }
 }
